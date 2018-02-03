@@ -52,6 +52,10 @@ func (s *Service) Start() error {
 	}
 	s.ln = ln
 
+	// API: func Handle(pattern string, handler Handler)
+	//      type Handler interface {
+	//              ServeHTTP(ResponseWriter, *Request)
+	//      }
 	http.Handle("/", s)
 
 	go func() {
@@ -71,6 +75,7 @@ func (s *Service) Close() {
 }
 
 // ServeHTTP allows service to serive HTTP requests.
+//
 func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(r.URL.Path, "/key") {
 		s.handleKeyRequest(w, r)

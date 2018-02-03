@@ -159,6 +159,7 @@ func (s *Store) Join(nodeID string, addr string) error {
 }
 
 type fsm Store
+
 type fsmSnapshot struct {
 	store map[string]string
 }
