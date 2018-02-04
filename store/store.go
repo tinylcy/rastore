@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/raft"
-	"github.com/hashicorp/raft-boltdb"
 	"io"
 	"net"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/hashicorp/raft"
+	"github.com/hashicorp/raft-boltdb"
 )
 
 const (
@@ -123,7 +124,7 @@ func (s *Store) Set(key string, val string) error {
 		return err
 	}
 
-	// Apply is used to issue a command tp the FSM in a highly consistent manner.
+	// Apply is used to issue a command to the FSM in a highly consistent manner.
 	// This returns a future that ca be used to wait on the application.
 	// This must be run on the leader or it will fail.
 	future := s.raft.Apply(cmd, raftTimeOut)
