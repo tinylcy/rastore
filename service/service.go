@@ -2,14 +2,12 @@ package service
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 )
 
-type Store interface {
+type Storer interface {
 	Get(key string) (string, error)
 	Set(key string, val string) error
 	Delete(key string) error
@@ -17,11 +15,11 @@ type Store interface {
 
 type Service struct {
 	listenAddr string
-	store      Store
+	store      Storer
 	router     *Router
 }
 
-func NewService(listenAddr string, store Store) *Service {
+func NewService(listenAddr string, store Storer) *Service {
 	return &Service{
 		listenAddr: listenAddr,
 		store:      store,
@@ -34,13 +32,7 @@ func (s *Service) Open() error {
 	router.InitRouter()
 	s.router = router
 
-	go func() {
-		log.Fatal(http.ListenAndServe(s.listenAddr, s.router.muxRouter))
-	}()
-
-	time.Sleep(100 * time.Second)
-
-	return nil
+	return http.ListenAndServe(s.listenAddr, s.router.muxRouter)
 }
 
 func (s *Service) HandleGet(w http.ResponseWriter, r *http.Request) {
