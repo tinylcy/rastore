@@ -1,3 +1,4 @@
+// Command line parser.
 package cmd
 
 import (
@@ -20,7 +21,7 @@ func ParseCmd() *Cmd {
 	flag.StringVar(&cmd.RaftAddr, "raftaddr", ":9091", "Set Raft communication address.")
 	flag.StringVar(&cmd.ClusterAddr, "clusteraddr", "", "Set cluster address to be joined.")
 	flag.StringVar(&cmd.NodeID, "id", "", "Set unique ID for node in cluster.")
-	flag.StringVar(&cmd.Data, "data", ".", "Set Raft data path.")
+	flag.StringVar(&cmd.Data, "data", "", "Set Raft data path.")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])

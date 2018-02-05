@@ -1,3 +1,4 @@
+// The Store module guarantee the data consensus of nodes in cluster.
 package store
 
 import (
@@ -5,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 	"path/filepath"
@@ -152,6 +154,29 @@ func (s *Store) Delete(key string) error {
 	return future.Error()
 }
 
+func (s *Store) Join(nodeID string, nodeAddr string) error {
+	if s.raft.State() != raft.Leader {
+		return errors.New("Not the leader, all changes to the system must go through the leader.")
+	}
+
+	serverID := raft.ServerID(nodeID)
+	serverAddr := raft.ServerAddress(nodeAddr)
+
+	log.Println("Received a join request: NodeID: %s, NodeAddr: %s", serverID, serverAddr)
+
+	// AddVoter will add the given server to the cluster as a staging server.
+	// If the server is already in the cluster as a voter, this does nothing.
+	// The leader will promote the staging server to a voter once that server is ready.
+	future := s.raft.AddVoter(serverID, serverAddr, 0, 0)
+	if future.Error() != nil {
+		return future.Error()
+	}
+
+	log.Printf("The node [NodeID: %s, NodeAddr: %s] has successfully joined the cluster", serverID, serverAddr)
+
+	return nil
+}
+
 ////////////////////////////// FSM /////////////////////////////////
 // FSM provides an interface that can be implementated by clients //
 // to make use of replicated log.                                 //
@@ -179,11 +204,13 @@ func (s *Store) Apply(log *raft.Log) interface{} {
 // Snapshot is used to support log compaction. This call should return
 // an FSMSnapshot which can be used to save a point-in-time snapshot of the FSM.
 func (s *Store) Snapshot() (raft.FSMSnapshot, error) {
+	// TODO
 	return nil, nil
 }
 
 // Restore is used to restore an FSM from a snapshot.
 func (s *Store) Restore(rc io.ReadCloser) error {
+	// TODO
 	return nil
 }
 
