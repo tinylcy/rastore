@@ -9,9 +9,9 @@ import (
 	"os"
 	"os/signal"
 
-	"rastore/cmd"
-	"rastore/service"
-	"rastore/store"
+	"github.com/tinylcy/rastore/cmd"
+	"github.com/tinylcy/rastore/service"
+	"github.com/tinylcy/rastore/store"
 )
 
 func main() {
